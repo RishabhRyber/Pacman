@@ -10,6 +10,7 @@
 #define col 20
 int placement[row][col];
 int player_x,player_y;
+int score=0;
 /*
     0 indicates neutral
     1 indicates food
@@ -22,16 +23,22 @@ void initialize_pos(){
     for(int i=0;i<row;i++)
         for(int j=0;j<col;j++){
             placement[i][j]=1;
-            printf("lol%d ",placement[i][j]);
-            
+            printf("lol%d ",placement[i][j]);      
         }
         placement[0][0]=3;
         player_x=0;
         player_y=0;
+        placement[5][5]=2;
+        placement[3][4]=2;
+        placement[1][7]=2;
+        placement[9][2]=2;
 
 }
 
-
+/* Note: x axis  extends column wise
+         y axis extends row wise
+         so placement[player_y][player_x] represents the current player position
+*/
 void showPlayer(int i,int j){
     glColor3f(0.2, 1, 0.2);
     glBegin(GL_QUAD_STRIP);
@@ -42,10 +49,20 @@ void showPlayer(int i,int j){
     glEnd();
 }
 
+void showEnemy(int i,int j){
+    glColor3f(1, 0, 0);
+    glBegin(GL_QUAD_STRIP);
+    glVertex2d(6*j+1,6*i+1);
+    glVertex2d(6*(j+1)-1,6*i+1);
+    glVertex2d(6*(j+1)-1,6*(i+1)-1);
+    glVertex2d(6*j+1,6*(i+1)-1);
+    glEnd();
+}
+
+
 void showFood(int i,int j){
     glPointSize(2);
     glColor3f(0.5, 0.5, 1.0);
-
     glBegin(GL_POINTS);
     glVertex2d(j*6+2,i*6+2);
     glEnd();
@@ -61,8 +78,10 @@ void display()
                 showFood(i,j);
                 printf("lol\n");
             }
-            if(placement[i][j]==3){
+            else if(placement[i][j]==3){
                 showPlayer(i,j);
+            }else if(placement[i][j]==2){
+                showEnemy(i,j);
             }
         }
 
@@ -82,41 +101,111 @@ void init()
     glClearColor(0.0, 0.0, 0.0, 0.0);
 }
 
-/*normal keys interaction for transformation
-u -- up, d--down, r--right l--left
-i -- increase size, D -- decrease size
-RL- rotate left  RR --rotate right
-*/
 
+
+
+
+/*
+     a->lefts
+     d->right
+     w->up
+     s->down
+*/
 void mykeys(unsigned char key, int x, int y)
 {
     switch (key)
     {
     case 'w':
-
-        glTranslatef(-2.0, 0.0f, 0.0f);
+        if(player_y == row-1)
+            break;
+        if(placement[player_y+1][player_x]==1){
+            // Food on upper block
+            placement[player_y][player_x]=0;
+            player_y++;
+            placement[player_y][player_x]=3;
+            score++;            
+        }else if(placement[player_y+1][player_x]==0){
+            // Nothing on upper block
+            placement[player_y][player_x]=0;
+            player_y++;
+            placement[player_y][player_x]=3;
+        }else if(placement[player_y+1][player_x]==-1){
+            // Wall on upper block
+            //do nothing for now
+        }else if(placement[player_y+1][player_x]==2){
+            // Enemy on upper block
+            exit(0);
+        }
         break;
-    case 'r':
-        glTranslatef(2.0, 0.0f, 0.0f);
-        break;
-    case 'u':
-        glTranslatef(0.0f, 2.0, 0.0f);
+    case 's':
+        if(player_y==0)
+            break;
+        if(placement[player_y-1][player_x]==1){
+            // Food on lower block
+            placement[player_y][player_x]=0;
+            player_y--;
+            placement[player_y][player_x]=3;
+            score++;            
+        }else if(placement[player_y-1][player_x]==0){
+            // Nothing on lower block
+            placement[player_y][player_x]=0;
+            player_y--;
+            placement[player_y][player_x]=3;
+        }else if(placement[player_y-1][player_x]==-1){
+            // Wall on lower block
+            //do nothing for now
+        }else if(placement[player_y-1][player_x]==2){
+            // Enemy on lower block
+            exit(0);
+        }
         break;
     case 'd':
-        glTranslatef(0.0, -2.0, 0.0);
+        if(player_x==col-1)
+            break;
+        if(placement[player_y][player_x+1]==1){
+            // Food on right block
+            placement[player_y][player_x]=0;
+            player_x++;
+            placement[player_y][player_x]=3;
+            score++;            
+        }else if(placement[player_y][player_x+1]==0){
+            // Nothing on right block
+            placement[player_y][player_x]=0;
+            player_x++;
+            placement[player_y][player_x]=3;
+        }else if(placement[player_y][player_x+1]==-1){
+            // Wall on right block
+            //do nothing for now
+        }else if(placement[player_y][player_x+1]==2){
+            // Enemy on right block
+            exit(0);
+        }
         break;
-    case 'i':
-        glScalef(1.5, 1.5, 1.5);
+    case 'a':
+        if(player_x==0)
+            break;
+        if(placement[player_y][player_x-1]==1){
+            // Food on right block
+            placement[player_y][player_x]=0;
+            player_x--;
+            placement[player_y][player_x]=3;
+            score++;            
+        }else if(placement[player_y][player_x-1]==0){
+            // Nothing on right block
+            placement[player_y][player_x]=0;
+            player_x--;
+            placement[player_y][player_x]=3;
+        }else if(placement[player_y][player_x-1]==-1){
+            // Wall on right block
+            //do nothing for now
+        }else if(placement[player_y][player_x-1]==2){
+            // Enemy on right block
+            exit(0);
+        }
         break;
-    case 'D':;
-        glScalef(-0.5, -0.5, -0.5);
-        break;
-    case 'R':
-        glRotatef(10, 1.0, 1.0, 0.0);
-        break;
-    case 'L':
-        glRotatef(-10, 1.0, 0.0, 0.0);
+
     }
+    moveEmemies();
     glutPostRedisplay();
 }
 
