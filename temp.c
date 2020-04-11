@@ -9,6 +9,8 @@
 #define row 10
 #define col 20
 int placement[row][col];
+int enem_dir[row][col]; //enem_dir store current direction of enemy at their index value 
+int enem_hist[row][col]; //enem_hist store if enemy have already moved. 
 int player_x,player_y;
 int score=0;
 /*
@@ -24,6 +26,8 @@ void initialize_pos(){
     for(int i=0;i<row;i++)
         for(int j=0;j<col;j++){
             placement[i][j]=1;
+            enem_dir[i][j]=0;
+            enem_hist[i][j]=0;
         }
         placement[0][0]=3;
         player_x=0;
@@ -31,6 +35,10 @@ void initialize_pos(){
         placement[5][5]=2;
         placement[3][4]=2;
         placement[1][7]=2;
+        enem_dir[1][7]='r';
+        enem_dir[3][4]='r';
+        enem_dir[5][5]='r';
+
         placement[8][2]=-1;
         placement[1][4]=-1;
         placement[2][4]=-2;
@@ -40,12 +48,56 @@ void initialize_pos(){
         
 }
 
+char nextDirection(int i,int j){
+    
+}
 
+void moveEnemy(int i, int j){
+    printf("%c\n",enem_dir[i][j]);
+    if(enem_dir[i][j]=='r'){
+        if((j+1)<col && placement[i][j+1]>0 ){
+            placement[i][j]=1;
+            placement[i][j+1]=2;
+            enem_dir[i][j]=0;
+            enem_dir[i][j+1]='r';
+            enem_hist[i][j+1]=1;
+            printf("left");
+        }else
+        {
+            placement[i][j]=1;
+            placement[i][j-1]=2;
+            enem_dir[i][j]=0;
+            enem_dir[i][j-1]='l';
+            enem_hist[i][j-1]=1;
+
+        }
+            
+    }
+    else if(enem_dir[i][j]=='l'){
+        
+    }
+    else if(enem_dir[i][j]=='u'){
+        
+    }
+    else if(enem_dir[i][j]=='d'){
+        
+    }else if(enem_dir[i][j]==0){
+
+    }
+}
 
 void moveEnemies(){
+
+    for(int i=0;i<row;i++)
+        for (int  j = 0; j < col; j++)
+            enem_hist[i][j]=0;
+
     for(int i=0;i<row;i++){
-        for (int  j = 0; i < col; j++)
+        for (int  j = 0; j < col; j++)
         {
+            if(placement[i][j]==2 && enem_hist[i][j]==0){
+                moveEnemy(i,j);
+            }
         }
         
     }
@@ -122,7 +174,7 @@ void showScoreBoard(){
 void display()
 {
     glClear(GL_COLOR_BUFFER_BIT);
-
+    moveEnemies();
     for(int i=0;i<row;i++){
         for(int j=0;j<col;j++){
             if(placement[i][j]==1){
@@ -136,7 +188,6 @@ void display()
                 showWall(i,j);
             }
         }
-
     }
     showScoreBoard();
     glFlush();
@@ -254,7 +305,6 @@ void mykeys(unsigned char key, int x, int y)
         break;
 
     }
-    moveEnemies();
     glutPostRedisplay();
 }
 
@@ -264,7 +314,7 @@ int main(int argc, char **argv)
     glutInit(&argc, argv);
     glutInitDisplayMode(GLUT_RGB | GLUT_SINGLE);
     glutInitWindowSize(1200,650);
-    glutCreateWindow("Transformation with out APIs");
+    glutCreateWindow("Pacman");
     glutDisplayFunc(display);
     glutKeyboardFunc(mykeys);
 
