@@ -38,24 +38,36 @@ void initialize_pos(){
         enem_dir[1][7]='r';
         enem_dir[3][4]='r';
         enem_dir[5][5]='r';
-
-        placement[8][2]=-1;
-        placement[1][4]=-1;
-        placement[2][4]=-2;
-        placement[2][5]=-2;
-        placement[2][6]=-2;
-        placement[2][7]=-2;
-        
-}
-
-char nextDirection(int i,int j){
-    
+//Wall Setup
+        // Wall upper block
+        placement[9][2]=2;
+        enem_dir[9][2]='r';
+        placement[9][1]=-1;
+        placement[8][1]=-2;
+        placement[8][2]=-2;
+        placement[8][3]=-2;
+        placement[8][4]=-2;
+        placement[8][5]=-2;
+        placement[8][6]=-2;
+        placement[8][7]=-2;
+        placement[8][8]=-2;
+        placement[8][9]=0;
+        placement[8][10]=-2;
+        placement[8][11]=-2;
+        placement[8][12]=-2;
+        placement[8][13]=-2;
+        placement[8][14]=-2;
+        placement[8][15]=-2;
+        placement[8][16]=-2;
+        placement[9][16]=-1;
+        // Wall middle left
+        placement
 }
 
 void moveEnemy(int i, int j){
     printf("%c\n",enem_dir[i][j]);
     if(enem_dir[i][j]=='r'){
-        if((j+1)<col && placement[i][j+1]>0 ){
+        if((j+1)<col && placement[i][j+1]>=0 ){
             placement[i][j]=1;
             placement[i][j+1]=2;
             enem_dir[i][j]=0;
@@ -74,13 +86,57 @@ void moveEnemy(int i, int j){
             
     }
     else if(enem_dir[i][j]=='l'){
-        
+        if((j-1)>=0 && placement[i][j-1]>=0 ){
+            placement[i][j]=1;
+            placement[i][j-1]=2;
+            enem_dir[i][j]=0;
+            enem_dir[i][j-1]='l';
+            enem_hist[i][j-1]=1;
+            printf("right");
+        }else
+        {
+            placement[i][j]=1;
+            placement[i][j+1]=2;
+            enem_dir[i][j]=0;
+            enem_dir[i][j+1]='r';
+            enem_hist[i][j+1]=1;
+
+        }
     }
     else if(enem_dir[i][j]=='u'){
-        
+        if((i+1)<row && placement[i+1][j]>=0 ){
+            placement[i][j]=1;
+            placement[i+1][j]=2;
+            enem_dir[i][j]=0;
+            enem_dir[i+1][j]='u';
+            enem_hist[i+1][j]=1;
+            printf("up");
+        }else
+        {
+            placement[i][j]=1;
+            placement[i-1][j]=2;
+            enem_dir[i][j]=0;
+            enem_dir[i-1][j]='d';
+            enem_hist[i-1][j]=1;
+        }
     }
     else if(enem_dir[i][j]=='d'){
-        
+        if((i-1)>=0 && placement[i-1][j]>=0 ){
+            placement[i][j]=1;
+            placement[i-1][j]=2;
+            enem_dir[i][j]=0;
+            enem_dir[i-1][j]='d';
+            enem_hist[i-1][j]=1;
+            printf("down");
+        }else
+        {
+            placement[i][j]=1;
+            placement[i+1][j]=2;
+            enem_dir[i][j]=0;
+            enem_dir[i+1][j]='u';
+            enem_hist[i+1][j]=1;
+
+        }
     }else if(enem_dir[i][j]==0){
 
     }
@@ -171,8 +227,7 @@ void showScoreBoard(){
         glutBitmapCharacter(GLUT_BITMAP_TIMES_ROMAN_24, s[i]);
 }
 
-void display()
-{
+void display(){
     glClear(GL_COLOR_BUFFER_BIT);
     moveEnemies();
     for(int i=0;i<row;i++){
@@ -193,8 +248,7 @@ void display()
     glFlush();
 }
 
-void init()
-{
+void init(){
     glViewport(0, 0, 500, 500);
     glMatrixMode(GL_PROJECTION);
     glLoadIdentity();
@@ -211,10 +265,8 @@ void init()
      w->up
      s->down
 */
-void mykeys(unsigned char key, int x, int y)
-{
-    switch (key)
-    {
+void mykeys(unsigned char key, int x, int y){
+    switch (key){
     case 'w':
         if(player_y == row-1)
             break;
@@ -308,8 +360,7 @@ void mykeys(unsigned char key, int x, int y)
     glutPostRedisplay();
 }
 
-int main(int argc, char **argv)
-{
+int main(int argc, char **argv){
     initialize_pos();
     glutInit(&argc, argv);
     glutInitDisplayMode(GLUT_RGB | GLUT_SINGLE);
