@@ -61,7 +61,6 @@ void initialize_pos(){
         placement[8][16]=-2;
         placement[9][16]=-1;
         // Wall middle left
-        placement
 }
 
 void moveEnemy(int i, int j){
@@ -140,6 +139,8 @@ void moveEnemy(int i, int j){
     }else if(enem_dir[i][j]==0){
 
     }
+
+    glutPostRedisplay();
 }
 
 void moveEnemies(){
@@ -157,6 +158,8 @@ void moveEnemies(){
         }
         
     }
+    glutTimerFunc(1000,moveEnemies,0);
+
 }
 
 
@@ -229,7 +232,6 @@ void showScoreBoard(){
 
 void display(){
     glClear(GL_COLOR_BUFFER_BIT);
-    moveEnemies();
     for(int i=0;i<row;i++){
         for(int j=0;j<col;j++){
             if(placement[i][j]==1){
@@ -257,6 +259,7 @@ void init(){
     glLoadIdentity();
     glColor3f(0.5, 0.5, 1.0);
     glClearColor(0.0, 0.0, 0.0, 0.0);
+    moveEnemies();
 }
 
 /*
